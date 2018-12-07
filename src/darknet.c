@@ -9,6 +9,7 @@
 #include "blas.h"
 #include "connected_layer.h"
 
+//在C语言中，修饰符extern用在变量或者函数的声明前，用来说明“此变量/函数是在别处定义的，要在此处引用”
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
 extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen);
 extern void run_voxel(int argc, char **argv);
@@ -387,19 +388,22 @@ void visualize(char *cfgfile, char *weightfile)
 #endif
 }
 
-int main(int argc, char **argv)
+//argc=argument counter,代表命令行总的参数个数   
+//argv=argument vector,argv[]为保存命令行参数的字符串指针，其中第0个参数是程序的全名，以后的参数为命令行后面跟的用户输入的参数，
+//argv参数是字符串指针数组，其各元素值为命令行中各字符串(参数均按字符串处理)的首地址。 指针数组的长度即为参数个数argc。数组元素初值由系统自动赋予
+int main(int argc, char **argv)                    
 {
     //test_resize("data/bad.jpg");
     //test_box();
     //test_convolutional_layer();
     if(argc < 2){
-        fprintf(stderr, "usage: %s <function>\n", argv[0]);
-        return 0;
-    }
+        fprintf(stderr, "usage: %s <function>\n", argv[0]);        //stderr是标准错误输出流，默认输出到终端窗口
+        return 0;             
+    }                                                              //参数小于2直接输出提示
     gpu_index = find_int_arg(argc, argv, "-i", 0);
     if(find_arg(argc, argv, "-nogpu")) {
         gpu_index = -1;
-    }
+    }                                                               //设置无gpu格式
 
 #ifndef GPU
     gpu_index = -1;
@@ -408,11 +412,11 @@ int main(int argc, char **argv)
         cuda_set_device(gpu_index);
     }
 #endif
-
+//输入选项
     if (0 == strcmp(argv[1], "average")){
         average(argc, argv);
     } else if (0 == strcmp(argv[1], "yolo")){
-        run_yolo(argc, argv);
+        run_yolo(argc, argv);                                        //从这里跳转出去，执行yolo
     } else if (0 == strcmp(argv[1], "voxel")){
         run_voxel(argc, argv);
     } else if (0 == strcmp(argv[1], "super")){
@@ -420,7 +424,8 @@ int main(int argc, char **argv)
     } else if (0 == strcmp(argv[1], "lsd")){
         run_lsd(argc, argv);
     } else if (0 == strcmp(argv[1], "detector")){
-        run_detector(argc, argv);
+        run_detector(argc, argv);                                    //若argv[1]= “detector”，则转向run_detector()(该函数在detector.c中)，
+                                                                     //并将输入参数传递给run_detector（）。
     } else if (0 == strcmp(argv[1], "detect")){
         float thresh = find_float_arg(argc, argv, "-thresh", .24);
         char *filename = (argc > 4) ? argv[4]: 0;
