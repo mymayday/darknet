@@ -1,6 +1,7 @@
-#include <time.h>
-#include <stdlib.h>
-#include <stdio.h>
+//include 称为文件包含命令，其意义是把尖括号""或引号<>内指定的文件包含到本程序中，成为本程序的一部分。被包含的文件通常是由系统提供的，其扩展名为.h 
+#include <time.h>                   //时间库函数头文件
+#include <stdlib.h>                 //标准库函数头文件
+#include <stdio.h>                  //standard input&output,标准输入输出头文件
 
 #include "parser.h"
 #include "utils.h"
