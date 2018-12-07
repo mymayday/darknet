@@ -613,6 +613,9 @@ void validate_detector_recall(char *cfgfile, char *weightfile)
     }
 }
 
+/*在test_detector（）函数中，包含了我们熟悉的一个端到端的过程。即，初始化模型、读取模型权重、读取图片、图片resize、将图片喂给模型进行前向传播、
+根据模型输出得到目标位置及类别、将目标位置及类别标注在图片上。*/
+
 /** 本函数是检测模型的一个前向推理测试函数.
  * @param datacfg       数据集信息文件路径（也即cfg/*.data文件），文件中包含有关数据集的信息，比如cfg/coco.data
  * @param cfgfile       网络配置文件路径（也即cfg/*.cfg文件），包含一个网络所有的结构参数，比如cfg/yolo.cfg
