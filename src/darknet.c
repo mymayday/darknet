@@ -1,6 +1,7 @@
-#include <time.h>
-#include <stdlib.h>
-#include <stdio.h>
+//#include文件的目的就是把多个编译单元（也就是c或者cpp文件）公用的内容，单独放在一个文件里减少整体代码尺寸
+#include <time.h>                                   //时间库函数头文件
+#include <stdlib.h>                                 //标准库函数头文件 
+#include <stdio.h>                                  //跨工程公共代码 
 
 #include "parser.h"
 #include "utils.h"
@@ -8,6 +9,7 @@
 #include "blas.h"
 #include "connected_layer.h"
 
+//在C语言中，修饰符extern用在变量或者函数的声明前，用来说明“此变量/函数是在别处定义的，要在此处引用”。
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
 extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen);
 extern void run_voxel(int argc, char **argv);
@@ -386,7 +388,13 @@ void visualize(char *cfgfile, char *weightfile)
 #endif
 }
 
-int main(int argc, char **argv)
+//下面是主函数main() 
+//main（）函数根据终端输入参数转向不同的功能函数。  
+//argc=argument counter 用来统计运行程序时送给main函数的命令行参数的个数
+//argv=argument vector * argv[ ]: 指针数组，用来存放指向你的字符串参数的指针，每一个元素指向一个参数
+//argv[0] 指向程序运行的全路径名,argv[1] 指向在DOS命令行中执行程序名后的第一个字符串,argv[2] 指向执行程序名后的第二个字符串
+
+int main(int argc, char **argv)            //整数类型主函数(整数类型统计参数个数,字符类型指针数组指向字符串参数)
 {
     //test_resize("data/bad.jpg");
     //test_box();
