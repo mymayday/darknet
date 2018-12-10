@@ -637,20 +637,24 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
     list *options = read_data_cfg(datacfg);
 
     // 获取数据集的名称（包括路径），第二个参数"names"表明要从options中获取所用数据集的名称信息（如names = data/coco.names）
+    //从option中查找names对应的value，如没有，使用默认值“data/names.list”
     char *name_list = option_find_str(options, "names", "data/names.list");
     
     // 从data/**.names中读取物体名称/标签信息
     char **names = get_labels(name_list);
 
-    // 加载data/labels/文件夹中所有的字符标签图片
+    // 加载data/labels/文件夹中ASCII码32-127的8种尺寸的图片，后边显示标签用。
     image **alphabet = load_alphabet();
 
     //
     network net = parse_network_cfg(cfgfile);
+    //加载之前训练的超参（权重等）
     if(weightfile){
         load_weights(&net, weightfile);
     }
+    //设置每层batch为1
     set_batch_network(&net, 1);
+    //srand函数是随机数发生器的初始化函数
     srand(2222222);
     clock_t time;
     char buff[256];
@@ -673,25 +677,29 @@ void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filenam
         image im = load_image_color(input,0,0);
         
         /// 标准化输入图片的尺寸为神经网络能够处理的图片尺寸net.w、net.h（主要涉及缩放/嵌入操作）
-        image sized = letterbox_image(im, net.w, net.h);
+        image sized = letterbox_image(im, net.w, net.h);      //对图片进行resize，resize成模型需要的大小。
         //image sized = resize_image(im, net.w, net.h);
         //image sized2 = resize_max(im, net.w);
         //image sized = crop_image(sized2, -((net.w - sized2.w)/2), -((net.h - sized2.h)/2), net.w, net.h);
         //resize_network(&net, sized.w, sized.h);
         layer l = net.layers[net.n-1];
 
-        box *boxes = calloc(l.w*l.h*l.n, sizeof(box));
+        box *boxes = calloc(l.w*l.h*l.n, sizeof(box));    
+        //C 库函数 void *calloc(size_t nitems, size_t size) 分配所需的内存空间，并返回一个指向它的指针
         float **probs = calloc(l.w*l.h*l.n, sizeof(float *));
         for(j = 0; j < l.w*l.h*l.n; ++j) probs[j] = calloc(l.classes + 1, sizeof(float *));
 
         float *X = sized.data;
         time=clock();
+        //模型进行前向传播。X为输入图片。
         network_predict(net, X);
         printf("%s: Predicted in %f seconds.\n", input, sec(clock()-time));
         get_region_boxes(l, im.w, im.h, net.w, net.h, thresh, probs, boxes, 0, 0, hier_thresh, 1);
         if (nms) do_nms_obj(boxes, probs, l.w*l.h*l.n, l.classes, nms);
         //else if (nms) do_nms_sort(boxes, probs, l.w*l.h*l.n, l.classes, nms);
+        //画出预测结果
         draw_detections(im, l.w*l.h*l.n, thresh, boxes, probs, names, alphabet, l.classes);
+        //保存标记了预测标签的图片
         if(outfile){
             save_image(im, outfile);
         }
