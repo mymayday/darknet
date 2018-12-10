@@ -417,6 +417,7 @@ int main(int argc, char **argv)
         average(argc, argv);
     } else if (0 == strcmp(argv[1], "yolo")){
         run_yolo(argc, argv);                                        //从这里跳转出去，执行yolo
+        
     } else if (0 == strcmp(argv[1], "voxel")){
         run_voxel(argc, argv);
     } else if (0 == strcmp(argv[1], "super")){
@@ -424,14 +425,19 @@ int main(int argc, char **argv)
     } else if (0 == strcmp(argv[1], "lsd")){
         run_lsd(argc, argv);
     } else if (0 == strcmp(argv[1], "detector")){
-        run_detector(argc, argv);                                    //若argv[1]= “detector”，则转向run_detector()(该函数在detector.c中)，
-                                                                     //并将输入参数传递给run_detector（）。
+        run_detector(argc, argv);                                  //若argv[1]= “detector”，则转向run_detector()函数(该函数在detector.c中)，
+                                                                   //并将输入参数传递给run_detector（）。
     } else if (0 == strcmp(argv[1], "detect")){
+        //获取threshold值（阈值）
         float thresh = find_float_arg(argc, argv, "-thresh", .24);
+        //获取输入文件名
         char *filename = (argc > 4) ? argv[4]: 0;
+        //获取输出文件名
         char *outfile = find_char_arg(argc, argv, "-out", 0);
+        //是否全屏显示
         int fullscreen = find_arg(argc, argv, "-fullscreen");
-        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, .5, outfile, fullscreen);
+        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, .5, outfile, fullscreen); 
+        //转向test_detector()函数(该函数在detector.c中)
     } else if (0 == strcmp(argv[1], "cifar")){
         run_cifar(argc, argv);
     } else if (0 == strcmp(argv[1], "go")){
