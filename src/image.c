@@ -1625,13 +1625,20 @@ image load_image_stb(char *filename, int channels)
 **       会按照指定的大小对图像大小进行重排，这样就可以得到期待大小的图片尺寸
 **        
 */
-image load_image(char *filename, int w, int h, int c)
+image load_image(char *filename, int w, int h, int c)          
 {
     // 根据是否使用opencv，调用不同的函数读入图片
 #ifdef OPENCV
     // 如果定义了OPENCV则调用opencv中的函数读入图片，c为指定通道
+    
+    //使用opencv时，load_image_cv(filename,c)调用ipl_to_image()。在ipl_to_image（）中，函数会先初始化一个image结构体，
+    //再调用ipl_into_image()将输入图片的信息赋值给结构体成员变量。
+    //ipl_into_image()的作用是改变float*data中图片像素数据的存储顺序
     image out = load_image_cv(filename, c);
 #else
+    //不使用opencv时，darknet使用一个简单的图像库stb_image.h进行图像的读取、存储等简单的操作，因此不能显示图片。
+    //此时，使用load_image_stb(filename,c)读取图片信息，其功能依然是改变图片像素数据的存储顺序。
+    
     // load_image_stb()将调用开源的用C语言编写的读入图片的函数（此函数非常复杂），
     // 并完成数据类型以及图片灰度存储格式的转换
     // 输出的out灰度值被归一化到0~1之间，只有一行，且按照rrr...ggg...bbb...方式存储（如果是3通道）
